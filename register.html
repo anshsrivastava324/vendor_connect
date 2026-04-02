@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Vendor Connect</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/animations.js" defer></script>
+
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card register-card">
+            <div class="auth-header">
+                <h1>Join Vendor Connect</h1>
+                <p>Create your account to get started</p>
+            </div>
+
+            <form id="registerForm" class="auth-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="userType">Account Type</label>
+                        <select id="userType" name="userType" required>
+                            <option value="vendor">Vendor (Restaurant/Food Business)</option>
+                            <option value="supplier">Supplier (Ingredient Provider)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required minlength="6">
+                        <small>Minimum 6 characters</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div id="businessNameGroup" class="form-group hidden">
+                    <label for="businessName">Business Name</label>
+                    <input type="text" id="businessName" name="businessName">
+                </div>
+
+                <div class="address-section">
+                    <h4>Address Information</h4>
+                    <div class="form-group">
+                        <label for="street">Street Address</label>
+                        <input type="text" id="street" name="street">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City</label>
+                            <input type="text" id="city" name="city">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="state">State</label>
+                            <input type="text" id="state" name="state">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pincode">Pincode</label>
+                            <input type="text" id="pincode" name="pincode" pattern="[0-9]{6}">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">
+                    <span id="registerText">Create Account</span>
+                    <span id="registerSpinner" class="spinner hidden">Creating Account...</span>
+                </button>
+            </form>
+
+            <div class="auth-links">
+                <p>Already have an account? 
+                    <a href="vendor-login.html">Vendor Login</a> | 
+                    <a href="supplier-login.html">Supplier Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="errorMessage" class="error-message hidden"></div>
+    <div id="successMessage" class="success-message hidden"></div>
+
+    <script src="js/supabase-client.js?v=20260401"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('registerForm');
+        const userTypeSelect = document.getElementById('userType');
+        const businessNameGroup = document.getElementById('businessNameGroup');
+        const businessNameInput = document.getElementById('businessName');
+
+        // Show/hide business name field
+        userTypeSelect.addEventListener('change', function() {
+            if (this.value === 'supplier') {
+                businessNameGroup.classList.remove('hidden');
+                businessNameInput.required = true;
+            } else {
+                businessNameGroup.classList.add('hidden');
+                businessNameInput.required = false;
+            }
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const password = formData.get('password');
+            const confirmPassword = formData.get('confirmPassword');
+
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const registerText = document.getElementById('registerText');
+            const registerSpinner = document.getElementById('registerSpinner');
+            submitBtn.disabled = true;
+            registerText.classList.add('hidden');
+            registerSpinner.classList.remove('hidden');
+            
+            try {
+                const email = formData.get('email');
+                const name = formData.get('name');
+                const userType = formData.get('userType');
+                const phone = formData.get('phone');
+                const businessName = formData.get('businessName');
+                
+                console.log('=== REGISTRATION DEBUG START ===');
+                console.log('Email:', email);
+                console.log('Name:', name);
+                console.log('User Type:', userType);
+                console.log('Phone:', phone);
+                console.log('Business Name:', businessName);
+
+                // Step 1: Sign up with Supabase
+                console.log('Step 1: Creating auth user...');
+                const authResponse = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': SUPABASE_ANON_KEY
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password,
+                        data: {
+                            name: name,
+                            user_type: userType
+                        }
+                    })
+                });
+
+                const authResult = await authResponse.json();
+                console.log('Auth response status:', authResponse.status);
+                console.log('Auth result:', authResult);
+
+                if (authResult.error) {
+                    throw new Error(`Auth error: ${authResult.error.message}`);
+                }
+
+                if (!authResponse.ok) {
+                    throw new Error('Signup failed. Please try again.');
+                }
+
+                if (!authResult.user) {
+                    console.log('ℹ️ Signup accepted but user object was not returned.');
+                    alert('Registration submitted. Please verify your email, then log in.');
+
+                    setTimeout(() => {
+                        if (userType === 'vendor') {
+                            window.location.href = 'vendor-login.html';
+                        } else {
+                            window.location.href = 'supplier-login.html';
+                        }
+                    }, 2000);
+                    return;
+                }
+
+                console.log('✅ Auth user created with ID:', authResult.user.id);
+
+                // Step 2: Create profile
+                console.log('Step 2: Creating user profile...');
+                const profileData = {
+                    id: authResult.user.id,
+                    name: name,
+                    user_type: userType,
+                    phone: phone || '',
+                    business_name: userType === 'supplier' ? businessName : null,
+                    address_street: formData.get('street'),
+                    address_city: formData.get('city'),
+                    address_state: formData.get('state'),
+                    address_pincode: formData.get('pincode'),
+                    is_active: true
+                };
+
+                console.log('Profile data to insert:', profileData);
+
+                if (authResult.access_token) {
+                    const profileResponse = await fetch(`${SUPABASE_URL}/rest/v1/user_profiles`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'apikey': SUPABASE_ANON_KEY,
+                            'Authorization': `Bearer ${authResult.access_token}`,
+                            'Prefer': 'return=representation'
+                        },
+                        body: JSON.stringify(profileData)
+                    });
+
+                    console.log('Profile response status:', profileResponse.status);
+
+                    const profileText = await profileResponse.text();
+                    console.log('Profile response text:', profileText);
+
+                    if (!profileResponse.ok) {
+                        console.error('❌ Profile creation failed');
+                        console.error('Status:', profileResponse.status);
+                        console.error('Response:', profileText);
+                        alert('Registration completed, but profile setup is pending. Please log in once to finish setup.');
+                    } else {
+                        console.log('✅ Profile created successfully');
+                        alert('Registration successful! You can now log in.');
+                    }
+                } else {
+                    console.log('ℹ️ Signup succeeded without active session token (email confirmation likely required).');
+                    alert('Registration successful! Please verify your email, then log in.');
+                }
+
+                console.log('=== REGISTRATION DEBUG END ===');
+                
+                // Redirect to login
+                setTimeout(() => {
+                    if (userType === 'vendor') {
+                        window.location.href = 'vendor-login.html';
+                    } else {
+                        window.location.href = 'supplier-login.html';
+                    }
+                }, 2000);
+                
+            } catch (error) {
+                console.error('❌ Registration failed:', error);
+                alert(`Registration failed: ${error.message}`);
+            } finally {
+                submitBtn.disabled = false;
+                registerText.classList.remove('hidden');
+                registerSpinner.classList.add('hidden');
+            }
+        });
+    });
+    </script>
+
+
+</body>
+</html>
