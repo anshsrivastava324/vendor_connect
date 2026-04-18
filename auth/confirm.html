@@ -1,3 +1,4 @@
+<!--py -m http.server 5500-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +10,7 @@
     <script src="../js/animations.js" defer></script>
 
 </head>
-<body>
+<body class="auth-page">
     <div class="auth-container">
         <div class="auth-card">
             <div class="auth-header">
@@ -137,7 +138,7 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
-            color: #6b7280;
+            color: #5b6472;
         }
         
         .spinner-icon {
@@ -151,12 +152,12 @@
         }
         
         .success-message {
-            color: #059669;
+            color: #3e7c63;
             animation: fadeIn 0.5s ease;
         }
         
         .error-message {
-            color: #dc2626;
+            color: #742a2a;
             animation: fadeIn 0.5s ease;
         }
         
@@ -175,12 +176,12 @@
         .success-message p,
         .error-message p {
             margin-bottom: 10px;
-            color: #374151;
+            color: #334155;
         }
         
         .error-text {
             font-weight: 500;
-            color: #dc2626 !important;
+            color: #742a2a !important;
         }
         
         .button-group {
@@ -193,13 +194,13 @@
         
         .redirect-info {
             font-size: 14px;
-            color: #6b7280 !important;
+            color: #5b6472 !important;
             margin-top: 15px;
         }
         
         #countdown {
             font-weight: bold;
-            color: #3b82f6;
+            color: #7f6033;
         }
         
         @keyframes fadeIn {
