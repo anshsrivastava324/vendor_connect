@@ -9,6 +9,7 @@ class VendorDashboard {
         this.supplierProfilesById = new Map();
         this.selectedIngredients = new Map();
         this.currentIngredients = [];
+        this.currentRecipe = null;
         
         this.init();
     }
@@ -41,6 +42,13 @@ class VendorDashboard {
         document.getElementById('searchBtn').addEventListener('click', () => this.searchIngredients());
         document.getElementById('dishInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.searchIngredients();
+        });
+        document.getElementById('getRecipeBtn').addEventListener('click', () => this.openRecipeModal());
+        document.getElementById('closeRecipeModal').addEventListener('click', () => this.closeRecipeModal());
+        document.getElementById('recipeModal').addEventListener('click', (e) => {
+            if (e.target.id === 'recipeModal') {
+                this.closeRecipeModal();
+            }
         });
 
         // Add all selected ingredients
@@ -98,9 +106,12 @@ class VendorDashboard {
         searchBtn.disabled = true;
         spinner.classList.remove('hidden');
         resultsDiv.classList.add('hidden');
+        this.currentRecipe = null;
+        this.setRecipeButtonVisibility(false);
+        this.closeRecipeModal();
 
         try {
-            const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${encodeURIComponent(dishName)}&apiKey=${SPOONACULAR_API_KEY}&addRecipeInformation=true&fillIngredients=true&number=1`);
+            const response = await fetch(`https://api.spoonacular.com/recipes/complexSearch?query=${encodeURIComponent(dishName)}&apiKey=${SPOONACULAR_API_KEY}&addRecipeInformation=true&fillIngredients=true&instructionsRequired=true&number=5`);
             
             if (!response.ok) {
                 throw new Error('Failed to fetch ingredients');
@@ -109,7 +120,17 @@ class VendorDashboard {
             const data = await response.json();
             
             if (data.results && data.results.length > 0) {
-                this.currentIngredients = data.results[0].extendedIngredients.map(ingredient => ({
+                const topRecipe = this.pickBestRecipe(data.results, dishName);
+                if (!topRecipe) {
+                    this.showNoResults();
+                    this.setRecipeButtonVisibility(false);
+                    return;
+                }
+                const extendedIngredients = Array.isArray(topRecipe.extendedIngredients)
+                    ? topRecipe.extendedIngredients
+                    : [];
+
+                this.currentIngredients = extendedIngredients.map(ingredient => ({
                     id: ingredient.id,
                     name: ingredient.name,
                     amount: ingredient.amount || 1,
@@ -117,19 +138,166 @@ class VendorDashboard {
                     image: ingredient.image
                 }));
 
+                this.currentRecipe = this.buildRecipeDetails(topRecipe);
+                this.setRecipeButtonVisibility(this.currentRecipe !== null);
+
                 this.displayIngredients(dishName);
                 this.selectedIngredients.clear();
                 this.updateSelectedCount();
             } else {
                 this.showNoResults();
+                this.setRecipeButtonVisibility(false);
             }
         } catch (error) {
             console.error('Error fetching ingredients:', error);
             alert('Failed to fetch ingredients. Please try again.');
+            this.setRecipeButtonVisibility(false);
         } finally {
             searchBtn.disabled = false;
             spinner.classList.add('hidden');
         }
+    }
+
+    buildRecipeDetails(recipe) {
+        if (!recipe || !Array.isArray(recipe.extendedIngredients) || recipe.extendedIngredients.length === 0) {
+            return null;
+        }
+
+        const ingredientLines = recipe.extendedIngredients
+            .map(ingredient => ingredient?.original || ingredient?.name)
+            .filter(Boolean);
+
+        if (ingredientLines.length === 0) {
+            return null;
+        }
+
+        const steps = this.extractRecipeSteps(recipe);
+
+        if (steps.length === 0) {
+            return null;
+        }
+
+        return {
+            title: recipe.title || 'Recipe',
+            ingredients: ingredientLines,
+            steps,
+            readyInMinutes: recipe.readyInMinutes,
+            servings: recipe.servings
+        };
+    }
+
+    pickBestRecipe(recipes, dishName) {
+        if (!Array.isArray(recipes) || recipes.length === 0) {
+            return null;
+        }
+
+        const normalizedDishName = this.normalizeText(dishName);
+        const scored = recipes
+            .map(recipe => {
+                const title = this.normalizeText(recipe?.title || '');
+                const hasIngredients = Array.isArray(recipe?.extendedIngredients) && recipe.extendedIngredients.length > 0;
+                const steps = this.extractRecipeSteps(recipe);
+                const hasSteps = steps.length > 0;
+                const titleMatchScore = title.includes(normalizedDishName) ? 2 : (normalizedDishName.includes(title) ? 1 : 0);
+                const score = (hasIngredients ? 4 : 0) + (hasSteps ? 4 : 0) + titleMatchScore;
+
+                return {
+                    recipe,
+                    score,
+                    hasIngredients,
+                    hasSteps
+                };
+            })
+            .filter(item => item.hasIngredients && item.hasSteps)
+            .sort((a, b) => b.score - a.score);
+
+        return scored.length > 0 ? scored[0].recipe : null;
+    }
+
+    extractRecipeSteps(recipe) {
+        const analyzedSteps = (recipe?.analyzedInstructions || [])
+            .flatMap(section => section.steps || [])
+            .map(step => this.cleanHtmlText(step?.step || ''))
+            .filter(Boolean);
+
+        if (analyzedSteps.length > 0) {
+            return analyzedSteps;
+        }
+
+        const cleanedInstructions = this.cleanHtmlText(recipe?.instructions || '');
+        if (!cleanedInstructions) {
+            return [];
+        }
+
+        return cleanedInstructions
+            .split(/(?:\r?\n)+|(?<=[.!?])\s+(?=[A-Z0-9])/)
+            .map(step => step.trim())
+            .filter(step => step.length > 10);
+    }
+
+    cleanHtmlText(text) {
+        if (!text) return '';
+        const holder = document.createElement('div');
+        holder.innerHTML = text;
+        return (holder.textContent || holder.innerText || '').trim();
+    }
+
+    escapeHtml(text) {
+        if (!text) return '';
+        const holder = document.createElement('div');
+        holder.textContent = text;
+        return holder.innerHTML;
+    }
+
+    setRecipeButtonVisibility(visible) {
+        const recipeBtn = document.getElementById('getRecipeBtn');
+        if (!recipeBtn) return;
+        recipeBtn.classList.toggle('hidden', !visible);
+    }
+
+    openRecipeModal() {
+        if (!this.currentRecipe) return;
+
+        const recipeTitle = document.getElementById('recipeTitle');
+        const recipeMeta = document.getElementById('recipeMeta');
+        const recipeIngredients = document.getElementById('recipeIngredients');
+        const recipeSteps = document.getElementById('recipeSteps');
+        const recipeInstructionsHeading = document.getElementById('recipeInstructionsHeading');
+        const recipeModal = document.getElementById('recipeModal');
+
+        recipeTitle.textContent = this.currentRecipe.title;
+
+        const metaParts = [];
+        if (this.currentRecipe.readyInMinutes) {
+            metaParts.push(`Ready in ${this.currentRecipe.readyInMinutes} min`);
+        }
+        if (this.currentRecipe.servings) {
+            metaParts.push(`Serves ${this.currentRecipe.servings}`);
+        }
+        recipeMeta.textContent = metaParts.join(' • ');
+        recipeMeta.classList.toggle('hidden', metaParts.length === 0);
+
+        recipeIngredients.innerHTML = this.currentRecipe.ingredients
+            .map(ingredient => `<li>${this.escapeHtml(ingredient)}</li>`)
+            .join('');
+
+        if (Array.isArray(this.currentRecipe.steps) && this.currentRecipe.steps.length > 0) {
+            recipeInstructionsHeading.classList.remove('hidden');
+            recipeSteps.innerHTML = this.currentRecipe.steps
+                .map(step => `<li>${this.escapeHtml(step)}</li>`)
+                .join('');
+        } else {
+            recipeInstructionsHeading.classList.add('hidden');
+            recipeSteps.innerHTML = '<li>Recipe steps are not available for this dish.</li>';
+        }
+
+        recipeModal.classList.remove('hidden');
+    }
+
+    closeRecipeModal() {
+        const recipeModal = document.getElementById('recipeModal');
+        if (!recipeModal) return;
+        recipeModal.classList.add('hidden');
     }
 
     displayIngredients(dishName) {
@@ -890,6 +1058,8 @@ class VendorDashboard {
     }
 
     showNoResults() {
+        this.currentRecipe = null;
+        this.setRecipeButtonVisibility(false);
         document.getElementById('ingredientsList').innerHTML = 
             '<div class="no-results">No ingredients found for this dish. Try a different search term.</div>';
         document.getElementById('ingredientsResult').classList.remove('hidden');
