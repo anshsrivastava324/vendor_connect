@@ -9,7 +9,7 @@
     <script src="js/animations.js" defer></script>
 
 </head>
-<body>
+<body class="role-vendor dashboard-page">
     <nav class="dashboard-nav">
         <div class="nav-brand">
             <h2>Vendor Connect</h2>
@@ -53,7 +53,10 @@
                 <div class="search-section">
                     <div class="search-box">
                         <input type="text" id="dishInput" placeholder="Enter dish name (e.g., Chicken Curry, Pasta Carbonara)">
-                        <button id="searchBtn" class="btn btn-primary">Search</button>
+                        <div class="search-actions">
+                            <button id="searchBtn" class="btn btn-primary">Search</button>
+                            <button id="getRecipeBtn" class="btn btn-outline hidden" type="button">Get Recipe</button>
+                        </div>
                     </div>
                 </div>
 
@@ -72,6 +75,20 @@
 
                 <div id="searchSpinner" class="spinner-section hidden">
                     <div class="spinner">Searching ingredients...</div>
+                </div>
+
+                <div id="recipeModal" class="recipe-modal hidden" role="dialog" aria-modal="true" aria-labelledby="recipeTitle">
+                    <div class="recipe-card-modal">
+                        <button id="closeRecipeModal" class="recipe-close-btn" type="button" aria-label="Close recipe card">×</button>
+                        <div class="recipe-card-content">
+                            <h3 id="recipeTitle"></h3>
+                            <p id="recipeMeta" class="recipe-meta hidden"></p>
+                            <h4>Ingredients</h4>
+                            <ul id="recipeIngredients"></ul>
+                            <h4 id="recipeInstructionsHeading" class="hidden">Recipe Steps</h4>
+                            <ol id="recipeSteps"></ol>
+                        </div>
+                    </div>
                 </div>
             </div>
 
