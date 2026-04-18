@@ -1,5 +1,19 @@
 // Smooth scrolling and animations
 document.addEventListener('DOMContentLoaded', function() {
+    // Add scroll animation classes to feature cards before observer setup.
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach((card, index) => {
+        card.classList.add('animate-on-scroll');
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+
+    // Add scroll animation classes to step elements before observer setup.
+    const steps = document.querySelectorAll('.step');
+    steps.forEach((step, index) => {
+        step.classList.add('animate-on-scroll');
+        step.style.animationDelay = `${index * 0.2}s`;
+    });
+
     // Navbar scroll effect
     const navbar = document.querySelector('.navbar');
     if (navbar) {
@@ -30,20 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     animatedElements.forEach(el => {
         observer.observe(el);
-    });
-
-    // Add scroll animation classes to feature cards
-    const featureCards = document.querySelectorAll('.feature-card');
-    featureCards.forEach((card, index) => {
-        card.classList.add('animate-on-scroll');
-        card.style.animationDelay = `${index * 0.1}s`;
-    });
-
-    // Add scroll animation classes to step elements
-    const steps = document.querySelectorAll('.step');
-    steps.forEach((step, index) => {
-        step.classList.add('animate-on-scroll');
-        step.style.animationDelay = `${index * 0.2}s`;
     });
 
     // Smooth scrolling for anchor links
