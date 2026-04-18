@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vendor Connect - Streamline Your Supply Chain</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?v=20260411">
     <script src="js/animations.js" defer></script>
 
 </head>
-<body>
+<body class="landing-page">
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
@@ -16,7 +19,8 @@
             </div>
             <div class="nav-menu">
                 <a href="#features">Features</a>
-                <a href="#about">About</a>
+                <a href="#process">Process</a>
+                <a href="#capabilities">Capabilities</a>
                 <a href="vendor-login.html" class="btn btn-outline">Vendor Login</a>
                 <a href="supplier-login.html" class="btn btn-primary">Supplier Login</a>
             </div>
@@ -26,17 +30,32 @@
     <header class="hero">
         <div class="hero-container">
             <div class="hero-content">
-                <h1>Revolutionize Your Supply Chain</h1>
-                <p>Connect vendors and suppliers seamlessly. Search ingredients by dish name, browse supplier inventories, and manage orders digitally.</p>
+                <p class="hero-kicker">Refined Procurement for Modern Kitchens</p>
+                <h1>Where Culinary Ambition Meets Reliable Supply</h1>
+                <p>Vendor Connect brings vendors and suppliers onto one elegant digital platform with intelligent ingredient discovery, verified supplier catalogs, and precise order coordination.</p>
                 <div class="hero-buttons">
-                    <a href="register.html" class="btn btn-primary btn-large">Get Started</a>
-                    <a href="#features" class="btn btn-secondary btn-large">Learn More</a>
+                    <a href="register.html" class="btn btn-primary btn-large">Create Your Account</a>
+                    <a href="#features" class="btn btn-secondary btn-large">Explore Platform</a>
+                </div>
+                <div class="hero-highlights animate-on-scroll">
+                    <span>Dish-based ingredient lookup</span>
+                    <span>Role-specific vendor and supplier dashboards</span>
+                    <span>Digital ordering with real-time status updates</span>
                 </div>
             </div>
             <div class="hero-image">
-                <div class="hero-card">
-                    <h3>🍽️ Search by Dish</h3>
-                    <p>Enter "Chicken Curry" and get all ingredients instantly</p>
+                <div class="hero-card animate-on-scroll">
+                    <p class="card-label">Platform Focus</p>
+                    <h3>Clear Procurement, End to End</h3>
+                    <ul>
+                        <li>Search ingredients by dish requirements</li>
+                        <li>Browse supplier inventories in one place</li>
+                        <li>Order timelines with status milestones</li>
+                        <li>Centralized records for every transaction</li>
+                    </ul>
+                </div>
+                <div class="hero-note animate-on-scroll">
+                    Crafted for restaurants, caterers, cloud kitchens, and institutional buyers.
                 </div>
             </div>
         </div>
@@ -44,57 +63,161 @@
 
     <section id="features" class="features">
         <div class="container">
-            <h2>Why Choose Vendor Connect?</h2>
+            <h2>Built for Discipline, Speed, and Clarity</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">🔍</div>
-                    <h3>Smart Ingredient Search</h3>
-                    <p>Search ingredients by dish name using our Spoonacular integration. Get complete ingredient lists with measurements.</p>
+                    <div class="feature-icon">01</div>
+                    <h3>Dish-Based Ingredient Intelligence</h3>
+                    <p>Search by menu item and instantly receive complete ingredient requirements with practical quantities.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">📱</div>
-                    <h3>Digital Ordering</h3>
-                    <p>No more physical visits. Browse supplier catalogs, add items to cart, and place orders digitally.</p>
+                    <div class="feature-icon">02</div>
+                    <h3>Structured Supplier Catalogs</h3>
+                    <p>Review organized listings, compare options quickly, and add products to your cart in a single workflow.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Real-time Updates</h3>
-                    <p>Track orders, manage inventory, and receive notifications in real-time through our dashboard.</p>
+                    <div class="feature-icon">03</div>
+                    <h3>Real-Time Order Visibility</h3>
+                    <p>Track each order from request to delivery with transparent milestone updates for all stakeholders.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Secure & Reliable</h3>
-                    <p>Built with Supabase for enterprise-grade security and reliability you can trust.</p>
+                    <div class="feature-icon">04</div>
+                    <h3>Reliable Digital Records</h3>
+                    <p>Maintain clean procurement history and reduce manual error with a secure, centralized data trail.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">05</div>
+                    <h3>Dual Dashboards</h3>
+                    <p>Vendors and suppliers each receive role-specific dashboards tailored for faster decision-making.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">06</div>
+                    <h3>Scalable Collaboration</h3>
+                    <p>Whether you handle one outlet or many, coordinate sourcing across teams and regions with confidence.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="about" class="about">
-        <div class="container">
-            <h2>How It Works</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Register</h3>
-                    <p>Sign up as a vendor or supplier</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Search/Browse</h3>
-                    <p>Find ingredients by dish name or browse supplier catalogs</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Order</h3>
-                    <p>Add items to cart and place orders digitally</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <h3>Fulfill</h3>
-                    <p>Suppliers receive orders and fulfill them efficiently</p>
-                </div>
+    <section class="about" id="about">
+        <div class="container about-grid">
+            <div class="about-copy animate-on-scroll">
+                <p class="section-kicker">A Better Standard</p>
+                <h2>Elegant by Design, Practical by Nature</h2>
+                <p>Procurement often fails in the gap between urgency and organization. Vendor Connect closes that gap with a calm, structured interface and workflows that mirror how professional kitchens actually operate.</p>
+                <p>From sourcing ingredients for signature dishes to coordinating repeat orders with preferred partners, every interaction is clear, traceable, and easy to act on.</p>
             </div>
+            <div class="about-panel animate-on-scroll">
+                <h3>What this means for your team</h3>
+                <ul>
+                    <li>Less back-and-forth, faster approvals</li>
+                    <li>Consistent sourcing quality across orders</li>
+                    <li>Operational confidence during peak demand</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="process" class="process">
+        <div class="container">
+            <h2>How the Flow Works</h2>
+            <div class="workflow-grid">
+                <article class="workflow-card vendor-workflow animate-on-scroll">
+                    <h3>Vendor Workflow</h3>
+                    <ol>
+                        <li>
+                            <span>01</span>
+                            <div>
+                                <h4>Register and Access Dashboard</h4>
+                                <p>Create a vendor account and access your workspace.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>02</span>
+                            <div>
+                                <h4>Search by Dish</h4>
+                                <p>Find required ingredients for menu items and review results.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>03</span>
+                            <div>
+                                <h4>Build and Place Orders</h4>
+                                <p>Add items to cart, confirm quantities, and submit purchase orders.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>04</span>
+                            <div>
+                                <h4>Track Fulfillment</h4>
+                                <p>Monitor order status and delivery progress in real time.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </article>
+
+                <article class="workflow-card supplier-workflow animate-on-scroll">
+                    <h3>Supplier Workflow</h3>
+                    <ol>
+                        <li>
+                            <span>01</span>
+                            <div>
+                                <h4>Register and Configure Profile</h4>
+                                <p>Create a supplier account and set business details.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>02</span>
+                            <div>
+                                <h4>Maintain Catalog</h4>
+                                <p>Manage visible items, product details, and pricing information.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>03</span>
+                            <div>
+                                <h4>Receive and Review Orders</h4>
+                                <p>View incoming requests and prepare fulfillment plans.</p>
+                            </div>
+                        </li>
+                        <li>
+                            <span>04</span>
+                            <div>
+                                <h4>Fulfill and Update Status</h4>
+                                <p>Process orders and keep vendors updated through status changes.</p>
+                            </div>
+                        </li>
+                    </ol>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="capabilities" class="testimonials">
+        <div class="container">
+            <h2>Capability Overview</h2>
+            <div class="testimonials-grid">
+                <article class="quote animate-on-scroll">
+                    <p>Vendor Workspace</p>
+                    <h4>Search ingredients by dish, build carts, and place orders through a unified vendor flow.</h4>
+                </article>
+                <article class="quote animate-on-scroll">
+                    <p>Supplier Workspace</p>
+                    <h4>Manage catalog visibility, monitor incoming orders, and fulfill requests with clearer context.</h4>
+                </article>
+                <article class="quote animate-on-scroll">
+                    <p>Shared Foundation</p>
+                    <h4>Maintain consistent order records and status tracking for both sides of the supply workflow.</h4>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-band">
+        <div class="container cta-content animate-on-scroll">
+            <h2>Bring Calm, Precision, and Speed to Your Supply Chain</h2>
+            <p>Join Vendor Connect and modernize procurement with a platform designed for real-world kitchen operations.</p>
+            <a href="register.html" class="btn btn-primary btn-large">Start with Vendor Connect</a>
         </div>
     </section>
 
